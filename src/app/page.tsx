@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 
 export default function Home() {
@@ -143,6 +144,9 @@ export default function Home() {
           BNPL <span className="text-neon">Prediction</span> System
         </div>
         <div className="flex items-center gap-4">
+          <Link href="/docs" className="hidden md:block text-xs font-semibold text-text-secondary hover:text-neon transition-colors">
+            View Documentation
+          </Link>
           <div className="hidden sm:flex items-center gap-2 bg-surface border border-border rounded-full px-3 py-1.5 text-xs font-semibold text-text-secondary">
             <div
               className={`w-2 h-2 rounded-full ${
