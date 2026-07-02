@@ -74,7 +74,7 @@ export default function DocsPage() {
 
       {/* Main Content */}
       <div className="pt-[100px] pb-32 px-6 lg:px-8 max-w-[1280px] mx-auto w-full flex flex-col md:flex-row gap-12 lg:gap-24 relative">
-        
+
         {/* Sidebar */}
         <aside className="hidden md:block w-64 shrink-0">
           <div className="sticky top-[100px] flex flex-col gap-4 border-l-2 border-border pl-6">
@@ -84,9 +84,8 @@ export default function DocsPage() {
                 key={section.id}
                 href={`#${section.id}`}
                 onClick={(e) => scrollToSection(e, section.id)}
-                className={`text-[0.82rem] font-semibold transition-all relative ${
-                  activeSection === section.id ? "text-neon" : "text-text-secondary hover:text-text-primary"
-                }`}
+                className={`text-[0.82rem] font-semibold transition-all relative ${activeSection === section.id ? "text-neon" : "text-text-secondary hover:text-text-primary"
+                  }`}
                 style={{ textDecoration: 'none' }}
               >
                 {section.title}
@@ -110,9 +109,8 @@ export default function DocsPage() {
               key={section.id}
               href={`#${section.id}`}
               onClick={(e) => scrollToSection(e, section.id)}
-              className={`text-[0.75rem] font-bold whitespace-nowrap px-4 py-2 rounded-full transition-all ${
-                activeSection === section.id ? "bg-neon-dim text-neon border border-neon/20 shadow-neon-glow-sm" : "bg-surface text-text-muted border border-transparent"
-              }`}
+              className={`text-[0.75rem] font-bold whitespace-nowrap px-4 py-2 rounded-full transition-all ${activeSection === section.id ? "bg-neon-dim text-neon border border-neon/20 shadow-neon-glow-sm" : "bg-surface text-text-muted border border-transparent"
+                }`}
               style={{ textDecoration: 'none' }}
             >
               {section.title}
@@ -121,7 +119,7 @@ export default function DocsPage() {
         </nav>
 
         {/* Content Area */}
-        <motion.main 
+        <motion.main
           className="flex-1 w-full max-w-3xl"
           variants={staggerContainer}
           initial="hidden"
@@ -129,7 +127,7 @@ export default function DocsPage() {
         >
           <motion.div variants={fadeInUp} className="mb-14">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-text-primary mb-4 leading-tight">
-              Advanced System Documentation
+              System Documentation
             </h1>
             <p className="text-[0.95rem] text-text-muted font-medium">
               A comprehensive technical overview of the AI Credit Scoring Intelligence Platform for Modern Buy Now Pay Later (BNPL) Merchants.
@@ -143,12 +141,12 @@ export default function DocsPage() {
             <div className="p-8 bg-surface rounded-3xl border border-border group-hover:border-neon/30 transition-colors duration-500 shadow-sm relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-neon/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2"></div>
               <p className="text-[0.9rem] leading-relaxed text-text-secondary relative z-10">
-                The BNPL Prediction System represents a decoupled, high-throughput microservice architecture. 
-                The presentation layer leverages a React-based Next.js application designed with strict native-app visual paradigms, 
+                The BNPL Prediction System represents a decoupled, high-throughput microservice architecture.
+                The presentation layer leverages a React-based Next.js application designed with strict native-app visual paradigms,
                 utilizing Tailwind CSS for zero-runtime styling and Framer Motion for hardware-accelerated micro-interactions.
                 <br /><br />
-                The backend infrastructure is a stateless Flask REST API that orchestrates on-the-fly execution of a highly optimized 
-                XGBoost machine learning pipeline. The API manages inference requests in real-time while safely isolating 
+                The backend infrastructure is a stateless Flask REST API that orchestrates on-the-fly execution of a highly optimized
+                XGBoost machine learning pipeline. The API manages inference requests in real-time while safely isolating
                 heavy retraining cycles in asynchronous background threads.
               </p>
             </div>
@@ -161,11 +159,11 @@ export default function DocsPage() {
             <div className="p-8 bg-surface rounded-3xl border border-border group-hover:border-neon/30 transition-colors duration-500 shadow-sm relative overflow-hidden">
               <div className="absolute bottom-0 right-0 w-64 h-64 bg-neon/5 rounded-full blur-[80px] translate-y-1/2 translate-x-1/2"></div>
               <p className="text-[0.9rem] leading-relaxed text-text-secondary mb-6 relative z-10">
-                Data acts as the foundation of the intelligence pipeline. The current implementation programmatically generates 
-                a highly sophisticated, probabilistic synthetic transaction matrix of 50,000 distinct records. It mathematically models 
+                Data acts as the foundation of the intelligence pipeline. The current implementation programmatically generates
+                a highly sophisticated, probabilistic synthetic transaction matrix of 50,000 distinct records. It mathematically models
                 real-world BNPL behavioral constraints by categorizing populations into rigid latent risk tiers prior to feature distribution sampling.
               </p>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
                 <div className="bg-white border border-border rounded-xl p-5 hover:shadow-neon-glow-sm hover:border-neon/40 transition-all">
                   <h4 className="text-[0.75rem] font-bold text-neon mb-2 tracking-wider">VOLATILITY METRICS</h4>
@@ -190,10 +188,10 @@ export default function DocsPage() {
             <div className="p-8 bg-surface rounded-3xl border border-border group-hover:border-neon/30 transition-colors duration-500 shadow-sm relative overflow-hidden">
               <div className="absolute top-1/2 left-0 w-64 h-64 bg-neon/5 rounded-full blur-[80px] -translate-y-1/2 -translate-x-1/2"></div>
               <p className="text-[0.9rem] leading-relaxed text-text-secondary mb-6 relative z-10">
-                Inference is powered by an advanced <strong>XGBoost Gradient Boosting Classifier</strong>. The model is specifically parameterized 
+                Inference is powered by an advanced <strong>XGBoost Gradient Boosting Classifier</strong>. The model is specifically parameterized
                 to navigate complex, non-linear financial behaviors while aggressively minimizing false negatives via calculated class-weight adjustments.
               </p>
-              
+
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 relative z-10">
                 <div className="flex flex-col items-center justify-center bg-white border border-border rounded-xl py-4">
                   <span className="text-[1.5rem] font-bold text-text-primary">500</span>
@@ -247,10 +245,10 @@ export default function DocsPage() {
             </h2>
             <div className="p-8 bg-surface rounded-3xl border border-border group-hover:border-neon/30 transition-colors duration-500 shadow-sm relative overflow-hidden">
               <p className="text-[0.9rem] leading-relaxed text-text-secondary mb-6 relative z-10">
-                To guarantee state-of-the-art predictive relevance, the architecture supports zero-downtime, continuous feature matrix regeneration 
+                To guarantee state-of-the-art predictive relevance, the architecture supports zero-downtime, continuous feature matrix regeneration
                 and model hot-swapping via an asynchronous 24-hour cycle.
               </p>
-              
+
               <div className="relative border-l-2 border-neon/30 ml-3 pl-6 space-y-6 z-10">
                 <div className="relative">
                   <div className="absolute w-3 h-3 bg-neon rounded-full -left-[31px] top-1 shadow-neon-glow-sm"></div>
@@ -309,7 +307,7 @@ export default function DocsPage() {
           </motion.section>
 
           {/* Footer / Credit */}
-          <motion.footer 
+          <motion.footer
             variants={fadeInUp}
             className="pt-10 border-t border-border mt-10 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-4"
           >
