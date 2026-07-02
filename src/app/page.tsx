@@ -469,12 +469,15 @@ export default function Home() {
             </motion.h3>
             <motion.p 
               initial={{ y: 10, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.2 }}
+              animate={{ y: 0, opacity: [0.4, 1, 0.4] }}
+              transition={{ 
+                y: { delay: 0.2, duration: 0.4 }, 
+                opacity: { delay: 0.2, duration: 2, repeat: Infinity, ease: "easeInOut" } 
+              }}
               className="text-[0.95rem] font-medium text-text-muted text-center max-w-sm px-6 leading-relaxed"
             >
               {isTraining 
-                ? "The XGBoost model is currently training on a fresh matrix of 50,000 synthetic transactions. Please wait approximately 30 to 60 seconds." 
+                ? "The XGBoost model is currently training on a fresh matrix of 50,000 synthetic transactions. Please wait approximately 30 to 60 seconds..." 
                 : "Running XGBoost Inference..."}
             </motion.p>
           </motion.div>
