@@ -119,15 +119,25 @@ export default function DocsPage() {
         </nav>
 
         {/* Content Area */}
-        <motion.main
+        <motion.main 
           className="flex-1 w-full max-w-3xl"
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
         >
-          <motion.div variants={fadeInUp} className="mb-14">
+          {/* Mobile Beautiful Curved Header */}
+          <div className="md:hidden relative pb-10 pt-12 px-6 shrink-0 bg-[#12141d] overflow-hidden rounded-b-[40px] shadow-xl -mx-6 mb-10 -mt-10">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-neon/30 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/10 rounded-full blur-[40px] translate-y-1/3 -translate-x-1/3"></div>
+            <div className="relative z-10 text-white text-center flex flex-col items-center">
+              <h1 className="text-3xl font-bold tracking-tight mb-2">System Documentation</h1>
+              <p className="text-[0.85rem] text-white/70 font-medium leading-relaxed">A comprehensive technical overview of the AI Credit Scoring Intelligence Platform.</p>
+            </div>
+          </div>
+
+          <motion.div variants={fadeInUp} className="hidden md:block mb-14">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-text-primary mb-4 leading-tight">
-              System Documentation
+              Advanced System Documentation
             </h1>
             <p className="text-[0.95rem] text-text-muted font-medium">
               A comprehensive technical overview of the AI Credit Scoring Intelligence Platform for Modern Buy Now Pay Later (BNPL) Merchants.

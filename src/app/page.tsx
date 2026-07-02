@@ -167,55 +167,6 @@ export default function Home() {
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col md:pt-[100px] md:pb-24 px-0 md:px-6 lg:px-8 max-w-[1280px] mx-auto w-full h-full md:h-auto overflow-hidden md:overflow-visible relative z-10">
         
-        {/* Desktop Training Indicator */}
-        <AnimatePresence>
-          {isTraining && (
-            <motion.div 
-              initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-              animate={{ opacity: 1, height: "auto", marginBottom: 32 }}
-              exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-              className="hidden md:block w-full overflow-hidden"
-            >
-              <div className="flex flex-col p-6 bg-surface border border-neon/30 rounded-[20px] shadow-[0_0_30px_rgba(185,21,255,0.06)] relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-neon/10">
-                  <motion.div 
-                    className="h-full bg-neon shadow-[0_0_10px_rgba(185,21,255,0.8)]"
-                    initial={{ width: "0%" }}
-                    animate={{ width: "100%" }}
-                    transition={{ duration: 45, ease: "linear" }}
-                  />
-                </div>
-                <div className="absolute -right-20 -top-20 w-64 h-64 bg-neon/5 rounded-full blur-[40px]"></div>
-                
-                <div className="flex items-center gap-6 relative z-10">
-                  <div className="relative w-12 h-12 shrink-0">
-                    <motion.div className="absolute inset-0 border-[3px] border-neon/20 rounded-full"></motion.div>
-                    <motion.div 
-                      className="absolute inset-0 border-[3px] border-neon border-t-transparent rounded-full"
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    ></motion.div>
-                    <motion.div 
-                      className="absolute inset-2 bg-neon/10 rounded-full flex items-center justify-center"
-                      animate={{ scale: [0.8, 1.1, 0.8] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    >
-                      <div className="w-1.5 h-1.5 bg-neon rounded-full"></div>
-                    </motion.div>
-                  </div>
-                  <div>
-                    <h3 className="text-[1.05rem] font-bold text-text-primary tracking-tight mb-0.5">Synthesizing Intelligence...</h3>
-                    <p className="text-[0.85rem] font-medium text-text-secondary">
-                      The XGBoost model is currently training on a fresh matrix of 50,000 synthetic transactions. <br/>
-                      <span className="text-text-muted">This background process takes approximately 30 to 60 seconds without downtime.</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-8 items-start h-full md:h-auto overflow-hidden md:overflow-visible relative">
           
           {/* Left: Input Form (Tab 1 on Mobile) */}
@@ -484,45 +435,47 @@ export default function Home() {
 
       {/* Full Screen Loading Overlay */}
       <AnimatePresence>
-        {loading && (
+        {(loading || isTraining) && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] bg-white/80 backdrop-blur-md flex flex-col items-center justify-center"
           >
-            <div className="relative w-20 h-20 mb-6">
+            <div className="relative w-24 h-24 mb-6">
               <motion.div 
-                className="absolute inset-0 border-4 border-neon/20 rounded-full"
+                className="absolute inset-0 border-[4px] border-neon/20 rounded-full"
               ></motion.div>
               <motion.div 
-                className="absolute inset-0 border-4 border-neon border-t-transparent rounded-full"
+                className="absolute inset-0 border-[4px] border-neon border-t-transparent rounded-full"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               ></motion.div>
               <motion.div 
-                className="absolute inset-2 bg-neon/10 rounded-full flex items-center justify-center"
+                className="absolute inset-3 bg-neon/10 rounded-full flex items-center justify-center"
                 animate={{ scale: [0.9, 1.1, 0.9] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               >
-                <div className="w-2 h-2 bg-neon rounded-full"></div>
+                <div className="w-2.5 h-2.5 bg-neon rounded-full shadow-[0_0_10px_var(--neon)]"></div>
               </motion.div>
             </div>
             <motion.h3 
               initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="text-xl font-bold text-text-primary tracking-tight mb-2"
+              transition={{ delay: 0.1 }}
+              className="text-2xl font-bold text-text-primary tracking-tight mb-2 text-center px-4"
             >
-              Computing Intelligence
+              {isTraining ? "Synthesizing Intelligence..." : "Computing Intelligence"}
             </motion.h3>
             <motion.p 
               initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-sm font-medium text-text-muted"
+              transition={{ delay: 0.2 }}
+              className="text-[0.95rem] font-medium text-text-muted text-center max-w-sm px-6 leading-relaxed"
             >
-              Running XGBoost Inference...
+              {isTraining 
+                ? "The XGBoost model is currently training on a fresh matrix of 50,000 synthetic transactions. Please wait approximately 30 to 60 seconds." 
+                : "Running XGBoost Inference..."}
             </motion.p>
           </motion.div>
         )}
