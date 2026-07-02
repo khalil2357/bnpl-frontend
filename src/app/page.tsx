@@ -213,7 +213,7 @@ export default function Home() {
                       />
                     </div>
                     <div>
-                      <label className="block text-[0.68rem] font-bold tracking-wider text-text-muted mb-1.5 ml-1">MONTHLY VOL</label>
+                      <label className="block text-[0.68rem] font-bold tracking-wider text-text-muted mb-1.5 ml-1">MONTHLY VOLUME</label>
                       <input
                         type="number"
                         name="monthly_volume"
@@ -236,7 +236,10 @@ export default function Home() {
 
                   <div className="grid grid-cols-2 gap-4 md:gap-3">
                     <div>
-                      <label className="block text-[0.68rem] font-bold tracking-wider text-text-muted mb-1.5 ml-1">AVG GAP DAYS</label>
+                      <label className="flex items-center justify-between text-[0.68rem] font-bold tracking-wider text-text-muted mb-1.5 ml-1 pr-1">
+                        <span>AVG GAP DAYS</span>
+                        <span className="font-medium text-[0.6rem] opacity-60 normal-case tracking-normal">(0-30)</span>
+                      </label>
                       <input
                         type="number"
                         step="0.1"
@@ -246,7 +249,10 @@ export default function Home() {
                       />
                     </div>
                     <div>
-                      <label className="block text-[0.68rem] font-bold tracking-wider text-text-muted mb-1.5 ml-1">MAX GAP DAYS</label>
+                      <label className="flex items-center justify-between text-[0.68rem] font-bold tracking-wider text-text-muted mb-1.5 ml-1 pr-1">
+                        <span>MAX GAP DAYS</span>
+                        <span className="font-medium text-[0.6rem] opacity-60 normal-case tracking-normal">(0-90)</span>
+                      </label>
                       <input
                         type="number"
                         step="0.1"
@@ -259,7 +265,14 @@ export default function Home() {
 
                   <div className="grid grid-cols-2 gap-4 md:gap-3">
                     <div>
-                      <label className="block text-[0.68rem] font-bold tracking-wider text-text-muted mb-1.5 ml-1">NO FUNDS CNT</label>
+                      <label className="flex items-center gap-1.5 text-[0.68rem] font-bold tracking-wider text-text-muted mb-1.5 ml-1 relative group">
+                        <span>NO FUNDS CNT</span>
+                        <div className="cursor-help w-[14px] h-[14px] rounded-full border-[1.5px] border-text-muted/60 text-text-muted/80 flex items-center justify-center text-[0.55rem] font-bold hover:border-neon hover:text-neon transition-colors">i</div>
+                        <div className="absolute left-0 bottom-full mb-2 w-48 p-3 bg-[#12141d] text-white text-[0.7rem] font-medium leading-relaxed tracking-normal normal-case rounded-[12px] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 pointer-events-none border border-white/10">
+                          Number of times a scheduled payment failed due to insufficient funds in the account.
+                          <div className="absolute top-full left-4 w-2.5 h-2.5 bg-[#12141d] border-b border-r border-white/10 rotate-45 -mt-[6px]"></div>
+                        </div>
+                      </label>
                       <input
                         type="number"
                         name="insufficient_funds_count"
