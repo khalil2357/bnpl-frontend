@@ -247,6 +247,7 @@ export default function Home() {
                       type="text"
                       name="phone_number"
                       defaultValue="01712345678"
+                      required
                       className="w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] text-sm font-semibold px-4 py-3.5 md:py-3 focus:outline-none focus:border-neon focus:bg-white transition-all shadow-sm"
                     />
                   </div>
@@ -258,6 +259,7 @@ export default function Home() {
                         type="number"
                         name="total_transactions"
                         defaultValue={85}
+                        required
                         className="w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] text-sm font-semibold px-4 py-3.5 md:py-3 focus:outline-none focus:border-neon focus:bg-white transition-all shadow-sm"
                       />
                     </div>
@@ -267,6 +269,7 @@ export default function Home() {
                         type="number"
                         name="monthly_volume"
                         defaultValue={45000}
+                        required
                         className="w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] text-sm font-semibold px-4 py-3.5 md:py-3 focus:outline-none focus:border-neon focus:bg-white transition-all shadow-sm"
                       />
                     </div>
@@ -279,6 +282,7 @@ export default function Home() {
                       step="0.01"
                       name="success_rate"
                       defaultValue={0.92}
+                      required
                       className="w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] text-sm font-semibold px-4 py-3.5 md:py-3 focus:outline-none focus:border-neon focus:bg-white transition-all shadow-sm"
                     />
                   </div>
@@ -291,6 +295,7 @@ export default function Home() {
                         step="0.1"
                         name="avg_gap_days"
                         defaultValue={3.5}
+                        required
                         className="w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] text-sm font-semibold px-4 py-3.5 md:py-3 focus:outline-none focus:border-neon focus:bg-white transition-all shadow-sm"
                       />
                     </div>
@@ -301,6 +306,7 @@ export default function Home() {
                         step="0.1"
                         name="max_gap_days"
                         defaultValue={12}
+                        required
                         className="w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] text-sm font-semibold px-4 py-3.5 md:py-3 focus:outline-none focus:border-neon focus:bg-white transition-all shadow-sm"
                       />
                     </div>
@@ -313,6 +319,7 @@ export default function Home() {
                         type="number"
                         name="insufficient_funds_count"
                         defaultValue={0}
+                        required
                         className="w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] text-sm font-semibold px-4 py-3.5 md:py-3 focus:outline-none focus:border-neon focus:bg-white transition-all shadow-sm"
                       />
                     </div>
@@ -322,6 +329,7 @@ export default function Home() {
                         type="number"
                         name="late_payment_count"
                         defaultValue={0}
+                        required
                         className="w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] text-sm font-semibold px-4 py-3.5 md:py-3 focus:outline-none focus:border-neon focus:bg-white transition-all shadow-sm"
                       />
                     </div>
@@ -332,6 +340,7 @@ export default function Home() {
                     <div className="relative">
                       <select
                         name="merchant_category"
+                        required
                         className="w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] text-sm font-semibold px-4 py-3.5 md:py-3 focus:outline-none focus:border-neon focus:bg-white transition-all shadow-sm appearance-none"
                       >
                         {(merchantCategories.length ? merchantCategories : ["Electronics", "Grocery", "Fashion", "Travel", "Utilities", "Food"]).map(cat => (
