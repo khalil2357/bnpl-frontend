@@ -139,33 +139,35 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Topbar */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-border h-[60px] flex items-center justify-between px-6 lg:px-8">
-        <div className="font-bold text-[1.05rem] tracking-tight">
-          BNPL <span className="text-neon">Prediction</span> System
-        </div>
-        <div className="flex items-center gap-4">
-          <Link href="/docs" className="hidden md:block text-xs font-semibold text-text-secondary hover:text-neon transition-colors">
-            View Documentation
-          </Link>
-          <div className="hidden sm:flex items-center gap-2 bg-surface border border-border rounded-full px-3 py-1.5 text-xs font-semibold text-text-secondary">
-            <div
-              className={`w-2 h-2 rounded-full ${
-                isTraining
-                  ? "bg-orange shadow-[0_0_6px_var(--orange)] animate-pulse"
-                  : modelLoaded
-                  ? "bg-green shadow-[0_0_6px_var(--green)]"
-                  : "bg-red shadow-[0_0_6px_var(--red)]"
-              }`}
-            ></div>
-            <span>{statusMsg}</span>
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-border h-[60px] flex justify-center">
+        <div className="w-full max-w-[1280px] px-6 lg:px-8 h-full flex items-center justify-between">
+          <div className="font-bold text-[1.05rem] tracking-tight">
+            BNPL <span className="text-neon">Prediction</span> System
           </div>
-          <button
-            onClick={triggerUpdate}
-            disabled={isTraining}
-            className="bg-neon text-white text-xs font-bold tracking-wider px-4 py-2 rounded-lg shadow-neon-glow-sm hover:-translate-y-px hover:shadow-neon-glow transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            UPDATE
-          </button>
+          <div className="flex items-center gap-4">
+            <Link href="/docs" className="hidden md:block text-[0.78rem] font-bold tracking-wider text-text-secondary hover:text-neon transition-colors" style={{ textDecoration: 'none' }}>
+              VIEW DOCUMENTATION
+            </Link>
+            <div className="hidden sm:flex items-center gap-2 bg-surface border border-border rounded-full px-3 py-1.5 text-xs font-semibold text-text-secondary">
+              <div
+                className={`w-2 h-2 rounded-full ${
+                  isTraining
+                    ? "bg-orange shadow-[0_0_6px_var(--orange)] animate-pulse"
+                    : modelLoaded
+                    ? "bg-green shadow-[0_0_6px_var(--green)]"
+                    : "bg-red shadow-[0_0_6px_var(--red)]"
+                }`}
+              ></div>
+              <span>{statusMsg}</span>
+            </div>
+            <button
+              onClick={triggerUpdate}
+              disabled={isTraining}
+              className="bg-neon text-white text-[0.78rem] font-bold tracking-wider px-4 py-2 rounded-lg shadow-neon-glow-sm hover:-translate-y-px hover:shadow-neon-glow transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              UPDATE
+            </button>
+          </div>
         </div>
       </header>
 
