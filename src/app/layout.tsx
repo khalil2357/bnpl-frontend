@@ -1,16 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const space = Space_Grotesk({
-  variable: "--font-space",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "BNPL Prediction System",
@@ -24,9 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.variable} ${space.variable} antialiased`}
-      >
+      <body className="antialiased font-sans">
         {children}
       </body>
     </html>
