@@ -17,27 +17,9 @@ export default function DocsPage() {
   const [activeSection, setActiveSection] = useState(SECTIONS[0].id);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Desktop Vertical Scroll Spy
+  // Universal Horizontal Scroll Spy (Intersection Observer on slides)
   useEffect(() => {
-    const handleScroll = () => {
-      // Only run on desktop (where body scrolls)
-      if (window.innerWidth < 768) return; 
-      
-      const scrollPosition = window.scrollY + 100;
-      for (const section of SECTIONS) {
-        const element = document.getElementById(section.id);
-        if (element && element.offsetTop <= scrollPosition && element.offsetTop + element.offsetHeight > scrollPosition) {
-          setActiveSection(section.id);
-        }
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Mobile Horizontal Scroll Spy (Intersection Observer on slides)
-  useEffect(() => {
-    if (window.innerWidth >= 768 || !containerRef.current) return;
+    if (!containerRef.current) return;
     
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -61,17 +43,9 @@ export default function DocsPage() {
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
     const element = document.getElementById(id);
-    if (element) {
-      if (window.innerWidth < 768 && containerRef.current) {
-        // Mobile horizontal scroll to element
-        element.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
-      } else {
-        // Desktop vertical scroll
-        window.scrollTo({
-          top: element.offsetTop - 80,
-          behavior: "smooth",
-        });
-      }
+    if (element && containerRef.current) {
+      // Universal horizontal scroll to element
+      element.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
       setActiveSection(id);
     }
   };
@@ -90,7 +64,7 @@ export default function DocsPage() {
   };
 
   return (
-    <div className="bg-white md:min-h-screen h-[100dvh] overflow-hidden md:overflow-visible flex flex-col">
+    <div className="bg-white h-[100dvh] overflow-hidden flex flex-col">
       
       {/* Desktop Topbar */}
       <header className="hidden md:flex fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-border h-[60px] justify-center shrink-0">
@@ -144,18 +118,18 @@ export default function DocsPage() {
       </div>
 
       {/* Main Content Layout */}
-      <div className="flex-1 md:pt-[100px] md:pb-32 px-0 md:px-6 lg:px-8 max-w-[1280px] mx-auto w-full flex flex-col md:flex-row gap-0 md:gap-12 lg:gap-24 relative overflow-hidden md:overflow-visible">
+      <div className="flex-1 md:pt-[100px] md:pb-8 px-0 md:px-6 lg:px-8 max-w-[1280px] mx-auto w-full flex flex-col md:flex-row gap-0 md:gap-12 lg:gap-16 relative overflow-hidden">
         
         {/* Desktop Sidebar */}
-        <aside className="hidden md:block w-64 shrink-0">
-          <div className="sticky top-[100px] flex flex-col gap-4 border-l-2 border-border pl-6">
+        <aside className="hidden md:block w-56 shrink-0 h-full">
+          <div className="flex flex-col gap-4 border-l-2 border-border pl-6 h-full pt-4">
             <h3 className="text-[0.68rem] font-bold tracking-[0.1em] text-text-muted mb-2 uppercase">Documentation</h3>
             {SECTIONS.map((section) => (
               <a
                 key={section.id}
                 href={`#${section.id}`}
                 onClick={(e) => scrollToSection(e, section.id)}
-                className={`text-[0.82rem] font-semibold transition-all relative ${activeSection === section.id ? "text-neon" : "text-text-secondary hover:text-text-primary"
+                className={`text-[0.82rem] font-semibold transition-all relative py-1 ${activeSection === section.id ? "text-neon" : "text-text-secondary hover:text-text-primary"
                   }`}
                 style={{ textDecoration: 'none' }}
               >
@@ -170,28 +144,42 @@ export default function DocsPage() {
                 )}
               </a>
             ))}
+            
+            {/* Desktop Quick Info */}
+            <div className="mt-auto pb-4">
+              <div className="p-4 bg-surface rounded-[16px] border border-border">
+                <p className="text-[0.6rem] font-bold tracking-[0.1em] text-text-muted uppercase mb-2">Platform Developer</p>
+                <p className="text-[0.85rem] font-bold text-text-primary mb-1">MD. Ibrahim Khalil</p>
+                <div className="flex flex-col gap-0.5">
+                  <a href="tel:01304984437" className="text-[0.7rem] font-medium text-text-secondary hover:text-neon" style={{ textDecoration: 'none' }}>01304984437</a>
+                  <a href="mailto:eng.mdibrahimkhalil@gmail.com" className="text-[0.7rem] font-medium text-text-secondary hover:text-neon" style={{ textDecoration: 'none' }}>eng.mdibrahimkhalil@gmail.com</a>
+                </div>
+              </div>
+            </div>
           </div>
         </aside>
 
         {/* Swipeable Content Area */}
         <motion.main 
           ref={containerRef}
-          className="flex-1 w-full md:max-w-3xl flex md:block overflow-x-auto overflow-y-hidden md:overflow-visible snap-x snap-mandatory scrollbar-hide h-full md:h-auto pb-4 md:pb-0"
+          className="flex-1 w-full md:max-w-3xl flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory scrollbar-hide h-full pb-4 md:pb-0"
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
         >
-          <motion.div variants={fadeInUp} className="hidden md:block mb-14 shrink-0 w-full snap-start">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-text-primary mb-4 leading-tight">
-              Advanced System Documentation
-            </h1>
-            <p className="text-[0.95rem] text-text-muted font-medium">
-              A comprehensive technical overview of the AI Credit Scoring Intelligence Platform for Modern Buy Now Pay Later (BNPL) Merchants.
-            </p>
-          </motion.div>
+          {/* Combine Title and First Section on Desktop into one slide, but for simplicity we keep them as individual slides on mobile/desktop */}
+          
+          <motion.section variants={fadeInUp} id="architecture" className="relative group w-full shrink-0 snap-center px-6 md:px-2 h-full overflow-y-auto scrollbar-hide pt-6 md:pt-4 pb-12 md:pb-4">
+            <div className="hidden md:block mb-10">
+              <h1 className="text-4xl font-bold tracking-tight text-text-primary mb-3 leading-tight">
+                Advanced System Documentation
+              </h1>
+              <p className="text-[0.9rem] text-text-muted font-medium">
+                A comprehensive technical overview of the AI Credit Scoring Intelligence Platform for Modern Buy Now Pay Later (BNPL) Merchants.
+              </p>
+            </div>
 
-          <motion.section variants={fadeInUp} id="architecture" className="mb-0 md:mb-16 scroll-mt-24 relative group w-full shrink-0 snap-center px-6 md:px-0 h-full overflow-y-auto scrollbar-hide pt-6 md:pt-0 pb-12 md:pb-0">
-            <h2 className="text-2xl md:text-2xl font-bold text-text-primary mb-5 tracking-tight relative">
+            <h2 className="text-2xl font-bold text-text-primary mb-5 tracking-tight relative">
               <span className="text-neon mr-3 opacity-60">01.</span>System Architecture
             </h2>
             <div className="p-6 md:p-8 bg-surface rounded-[24px] md:rounded-3xl border border-border md:group-hover:border-neon/30 transition-colors duration-500 shadow-sm relative overflow-hidden">
@@ -208,7 +196,7 @@ export default function DocsPage() {
             </div>
           </motion.section>
 
-          <motion.section variants={fadeInUp} id="dataset" className="mb-0 md:mb-16 scroll-mt-24 relative group w-full shrink-0 snap-center px-6 md:px-0 h-full overflow-y-auto scrollbar-hide pt-6 md:pt-0 pb-12 md:pb-0">
+          <motion.section variants={fadeInUp} id="dataset" className="relative group w-full shrink-0 snap-center px-6 md:px-2 h-full overflow-y-auto scrollbar-hide pt-6 md:pt-4 pb-12 md:pb-4">
             <h2 className="text-2xl font-bold text-text-primary mb-5 tracking-tight relative">
               <span className="text-neon mr-3 opacity-60">02.</span>Dataset Generation
             </h2>
@@ -237,7 +225,7 @@ export default function DocsPage() {
             </div>
           </motion.section>
 
-          <motion.section variants={fadeInUp} id="model" className="mb-0 md:mb-16 scroll-mt-24 relative group w-full shrink-0 snap-center px-6 md:px-0 h-full overflow-y-auto scrollbar-hide pt-6 md:pt-0 pb-12 md:pb-0">
+          <motion.section variants={fadeInUp} id="model" className="relative group w-full shrink-0 snap-center px-6 md:px-2 h-full overflow-y-auto scrollbar-hide pt-6 md:pt-4 pb-12 md:pb-4">
             <h2 className="text-2xl font-bold text-text-primary mb-5 tracking-tight relative">
               <span className="text-neon mr-3 opacity-60">03.</span>Machine Learning
             </h2>
@@ -269,7 +257,7 @@ export default function DocsPage() {
             </div>
           </motion.section>
 
-          <motion.section variants={fadeInUp} id="scoring" className="mb-0 md:mb-16 scroll-mt-24 relative group w-full shrink-0 snap-center px-6 md:px-0 h-full overflow-y-auto scrollbar-hide pt-6 md:pt-0 pb-12 md:pb-0">
+          <motion.section variants={fadeInUp} id="scoring" className="relative group w-full shrink-0 snap-center px-6 md:px-2 h-full overflow-y-auto scrollbar-hide pt-6 md:pt-4 pb-12 md:pb-4">
             <h2 className="text-2xl font-bold text-text-primary mb-5 tracking-tight relative">
               <span className="text-neon mr-3 opacity-60">04.</span>Methodology
             </h2>
@@ -295,7 +283,7 @@ export default function DocsPage() {
             </div>
           </motion.section>
 
-          <motion.section variants={fadeInUp} id="workflow" className="mb-0 md:mb-16 scroll-mt-24 relative group w-full shrink-0 snap-center px-6 md:px-0 h-full overflow-y-auto scrollbar-hide pt-6 md:pt-0 pb-12 md:pb-0">
+          <motion.section variants={fadeInUp} id="workflow" className="relative group w-full shrink-0 snap-center px-6 md:px-2 h-full overflow-y-auto scrollbar-hide pt-6 md:pt-4 pb-12 md:pb-4">
             <h2 className="text-2xl font-bold text-text-primary mb-5 tracking-tight relative">
               <span className="text-neon mr-3 opacity-60">05.</span>Update Workflow
             </h2>
@@ -330,7 +318,7 @@ export default function DocsPage() {
             </div>
           </motion.section>
 
-          <motion.section variants={fadeInUp} id="future" className="mb-0 md:mb-20 scroll-mt-24 relative group w-full shrink-0 snap-center px-6 md:px-0 h-full overflow-y-auto scrollbar-hide pt-6 md:pt-0 pb-12 md:pb-0">
+          <motion.section variants={fadeInUp} id="future" className="relative group w-full shrink-0 snap-center px-6 md:px-2 h-full overflow-y-auto scrollbar-hide pt-6 md:pt-4 pb-12 md:pb-4">
             <h2 className="text-2xl font-bold text-text-primary mb-5 tracking-tight relative">
               <span className="text-neon mr-3 opacity-60">06.</span>Future Works
             </h2>
@@ -371,25 +359,6 @@ export default function DocsPage() {
               </div>
             </div>
           </motion.section>
-
-          {/* Desktop Footer */}
-          <motion.footer
-            variants={fadeInUp}
-            className="hidden md:flex pt-10 border-t border-border mt-10 text-left justify-between items-center gap-4"
-          >
-            <div>
-              <p className="text-[0.75rem] font-bold text-text-muted tracking-widest uppercase mb-2">Developed By</p>
-              <p className="text-[1.1rem] font-bold text-text-primary tracking-tight">MD. Ibrahim Khalil</p>
-            </div>
-            <div className="flex flex-col items-end gap-1">
-              <a href="tel:01304984437" className="text-[0.85rem] font-medium text-text-secondary hover:text-neon transition-colors" style={{ textDecoration: 'none' }}>
-                01304984437
-              </a>
-              <a href="mailto:eng.mdibrahimkhalil@gmail.com" className="text-[0.85rem] font-medium text-text-secondary hover:text-neon transition-colors" style={{ textDecoration: 'none' }}>
-                eng.mdibrahimkhalil@gmail.com
-              </a>
-            </div>
-          </motion.footer>
 
         </motion.main>
       </div>
