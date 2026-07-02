@@ -225,7 +225,7 @@ export default function Home() {
             <div className="md:hidden relative pb-10 pt-12 px-6 shrink-0 bg-neon overflow-hidden rounded-b-[40px] shadow-neon-glow-sm">
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[50px] -translate-y-1/2 translate-x-1/3"></div>
               <div className="absolute bottom-0 left-0 w-32 h-32 bg-black/10 rounded-full blur-[30px] translate-y-1/2 -translate-x-1/3"></div>
-              <div className="relative z-10 text-white">
+              <div className="relative z-10 text-white text-center flex flex-col items-center">
                 <h1 className="text-3xl font-bold tracking-tight mb-1">New Assessment</h1>
                 <p className="text-[0.85rem] text-white/80 font-medium">AI-powered credit intelligence</p>
               </div>
@@ -363,7 +363,7 @@ export default function Home() {
             <div className="md:hidden relative pb-10 pt-12 px-6 shrink-0 bg-[#12141d] overflow-hidden rounded-b-[40px] shadow-xl">
               <div className="absolute top-0 right-0 w-64 h-64 bg-neon/30 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2"></div>
               <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/10 rounded-full blur-[40px] translate-y-1/3 -translate-x-1/3"></div>
-              <div className="relative z-10 text-white">
+              <div className="relative z-10 text-white text-center flex flex-col items-center">
                 <h1 className="text-3xl font-bold tracking-tight mb-1">Intelligence</h1>
                 <p className="text-[0.85rem] text-white/70 font-medium">Model output & risk metrics</p>
               </div>
