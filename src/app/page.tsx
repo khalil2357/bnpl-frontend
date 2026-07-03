@@ -12,15 +12,25 @@ export default function Home() {
 
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   // Mobile App State
   const [activeTab, setActiveTab] = useState<"input" | "results">("input");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // System Metrics State
+  const [sysInfo, setSysInfo] = useState<any>(null);
+  const [latency, setLatency] = useState<number>(0);
+
+  // Loader State
+  const [trainProgress, setTrainProgress] = useState(0);
+  const [showLoader, setShowLoader] = useState(false);
+
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5050";
 
   const pollStatus = async () => {
     try {
+      const start = Date.now();
       const res = await fetch(`${API_URL}/api/status`);
       const data = await res.json();
       setModelLoaded(data.model_loaded);
@@ -34,6 +44,15 @@ export default function Home() {
       } else {
         setStatusMsg("Not loaded");
       }
+
+      // Also poll system info
+      const sysStart = Date.now();
+      const sysRes = await fetch(`${API_URL}/api/system_info`);
+      if (sysRes.ok) {
+        const sysData = await sysRes.json();
+        setSysInfo(sysData);
+      }
+      setLatency(Date.now() - sysStart);
     } catch {
       setStatusMsg("Offline");
     }
@@ -44,6 +63,24 @@ export default function Home() {
     const interval = setInterval(pollStatus, 3000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    let interval: any;
+    if (isTraining) {
+      setShowLoader(true);
+      setTrainProgress(0);
+      interval = setInterval(() => {
+        setTrainProgress(p => (p < 99 ? p + 1 : p));
+      }, 50); // Fast horizontal loading
+    } else if (showLoader) {
+      setTrainProgress(100);
+      const to = setTimeout(() => {
+        setShowLoader(false);
+      }, 800);
+      return () => clearTimeout(to);
+    }
+    return () => clearInterval(interval);
+  }, [isTraining, showLoader]);
 
   const triggerUpdate = async () => {
     setIsMenuOpen(false); 
@@ -64,7 +101,11 @@ export default function Home() {
     const fd = new FormData(e.currentTarget);
     const payload: any = {};
     fd.forEach((v, k) => {
-      if (k === "phone_number" || k === "merchant_category") {
+      if (k === "phone_number") {
+        payload[k] = "+88" + String(v);
+        return;
+      }
+      if (k === "merchant_category") {
         payload[k] = String(v);
         return;
       }
@@ -73,6 +114,7 @@ export default function Home() {
     });
 
     try {
+      setErrorMsg("");
       // Simulate slight network delay for premium feel
       await new Promise(resolve => setTimeout(resolve, 800));
       
@@ -85,9 +127,11 @@ export default function Home() {
       if (!data.error) {
         setResult(data);
         setActiveTab("results");
+      } else {
+        setErrorMsg(data.error);
       }
     } catch {
-      // Fail silently as requested (no toasts)
+      setErrorMsg("Network error. Could not connect to API.");
     } finally {
       setLoading(false);
     }
@@ -194,122 +238,33 @@ export default function Home() {
                 <form onSubmit={submitScore} className="flex flex-col gap-5 md:gap-4">
                   <div>
                     <label className="block text-[0.68rem] font-bold tracking-wider text-text-muted mb-1.5 ml-1">PHONE NUMBER</label>
-                    <input
-                      type="text"
-                      name="phone_number"
-                      required
-                      className="w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] text-sm font-semibold px-4 py-3.5 md:py-3 focus:outline-none focus:border-neon focus:bg-white transition-all shadow-sm"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 md:gap-3">
-                    <div>
-                      <label className="block text-[0.68rem] font-bold tracking-wider text-text-muted mb-1.5 ml-1">TOTAL TRANS.</label>
-                      <input
-                        type="number"
-                        name="total_transactions"
-                        required
-                        className="w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] text-sm font-semibold px-4 py-3.5 md:py-3 focus:outline-none focus:border-neon focus:bg-white transition-all shadow-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[0.68rem] font-bold tracking-wider text-text-muted mb-1.5 ml-1">MONTHLY VOLUME</label>
-                      <input
-                        type="number"
-                        name="monthly_volume"
-                        required
-                        className="w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] text-sm font-semibold px-4 py-3.5 md:py-3 focus:outline-none focus:border-neon focus:bg-white transition-all shadow-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-[0.68rem] font-bold tracking-wider text-text-muted mb-1.5 ml-1">SUCCESS RATE (0-1)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      name="success_rate"
-                      required
-                      className="w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] text-sm font-semibold px-4 py-3.5 md:py-3 focus:outline-none focus:border-neon focus:bg-white transition-all shadow-sm"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 md:gap-3">
-                    <div>
-                      <label className="flex items-center justify-between text-[0.68rem] font-bold tracking-wider text-text-muted mb-1.5 ml-1 pr-1">
-                        <span>AVG GAP DAYS</span>
-                        <span className="font-medium text-[0.6rem] opacity-60 normal-case tracking-normal">(0-30)</span>
-                      </label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        name="avg_gap_days"
-                        required
-                        className="w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] text-sm font-semibold px-4 py-3.5 md:py-3 focus:outline-none focus:border-neon focus:bg-white transition-all shadow-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="flex items-center justify-between text-[0.68rem] font-bold tracking-wider text-text-muted mb-1.5 ml-1 pr-1">
-                        <span>MAX GAP DAYS</span>
-                        <span className="font-medium text-[0.6rem] opacity-60 normal-case tracking-normal">(0-90)</span>
-                      </label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        name="max_gap_days"
-                        required
-                        className="w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] text-sm font-semibold px-4 py-3.5 md:py-3 focus:outline-none focus:border-neon focus:bg-white transition-all shadow-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 md:gap-3">
-                    <div>
-                      <label className="flex items-center gap-1.5 text-[0.68rem] font-bold tracking-wider text-text-muted mb-1.5 ml-1 relative group">
-                        <span>NO FUNDS CNT</span>
-                        <div className="cursor-help w-[14px] h-[14px] rounded-full border-[1.5px] border-text-muted/60 text-text-muted/80 flex items-center justify-center text-[0.55rem] font-bold hover:border-neon hover:text-neon transition-colors">i</div>
-                        <div className="absolute left-0 bottom-full mb-2 w-48 p-3 bg-[#12141d] text-white text-[0.7rem] font-medium leading-relaxed tracking-normal normal-case rounded-[12px] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-20 pointer-events-none border border-white/10">
-                          Number of times a scheduled payment failed due to insufficient funds in the account.
-                          <div className="absolute top-full left-4 w-2.5 h-2.5 bg-[#12141d] border-b border-r border-white/10 rotate-45 -mt-[6px]"></div>
-                        </div>
-                      </label>
-                      <input
-                        type="number"
-                        name="insufficient_funds_count"
-                        required
-                        className="w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] text-sm font-semibold px-4 py-3.5 md:py-3 focus:outline-none focus:border-neon focus:bg-white transition-all shadow-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[0.68rem] font-bold tracking-wider text-text-muted mb-1.5 ml-1">LATE PAYMENTS</label>
-                      <input
-                        type="number"
-                        name="late_payment_count"
-                        required
-                        className="w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] text-sm font-semibold px-4 py-3.5 md:py-3 focus:outline-none focus:border-neon focus:bg-white transition-all shadow-sm"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-[0.68rem] font-bold tracking-wider text-text-muted mb-1.5 ml-1">MERCHANT CATEGORY</label>
-                    <div className="relative">
-                      <select
-                        name="merchant_category"
-                        defaultValue=""
-                        required
-                        className="w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] text-sm font-semibold px-4 py-3.5 md:py-3 focus:outline-none focus:border-neon focus:bg-white transition-all shadow-sm appearance-none"
-                      >
-                        <option value="" disabled>Select Merchant Category</option>
-                        {(merchantCategories.length ? merchantCategories : ["Electronics", "Grocery", "Fashion", "Travel", "Utilities", "Food"]).map(cat => (
-                          <option key={cat} value={cat}>{cat}</option>
-                        ))}
-                      </select>
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-neon">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    <div className="relative flex items-center w-full bg-surface/80 md:bg-white border-1.5 border-border rounded-[16px] overflow-hidden focus-within:border-neon focus-within:bg-white transition-all shadow-sm">
+                      <div className="pl-4 pr-2 py-3.5 md:py-3 text-sm font-semibold text-text-secondary bg-surface/50 border-r border-border h-full flex items-center">
+                        +88
                       </div>
+                      <input
+                        type="text"
+                        name="phone_number"
+                        placeholder="01712345678"
+                        pattern="^01\d{9}$"
+                        title="Must be an 11-digit number starting with 01"
+                        required
+                        className="flex-1 w-full bg-transparent text-sm font-semibold px-3 py-3.5 md:py-3 focus:outline-none"
+                        onInput={(e) => {
+                          let val = e.currentTarget.value.replace(/\D/g, '');
+                          if (val.startsWith('880')) {
+                            val = val.substring(2);
+                          }
+                          if (val.length > 11) {
+                            val = val.slice(0, 11);
+                          }
+                          e.currentTarget.value = val;
+                        }}
+                      />
                     </div>
                   </div>
+
+
 
                   <button
                     type="submit"
@@ -318,6 +273,11 @@ export default function Home() {
                   >
                     RUN ASSESSMENT
                   </button>
+                  {errorMsg && (
+                    <div className="mt-3 p-3 bg-red/10 border border-red/20 rounded-[12px] text-red text-[0.75rem] font-medium text-center">
+                      {errorMsg}
+                    </div>
+                  )}
                 </form>
               </div>
             </div>
@@ -438,55 +398,131 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        {/* System Info Dashboard */}
+        {sysInfo && (
+          <div className="w-full mt-4 md:mt-8 mb-[85px] md:mb-0 bg-surface border border-border rounded-[18px] p-4 md:p-5 flex flex-col md:flex-row gap-4 items-start md:items-center justify-between shadow-sm relative overflow-hidden z-20">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-neon/10 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/3"></div>
+            
+            <div className="flex flex-wrap md:flex-nowrap items-center gap-4 md:gap-8 z-10 w-full md:w-auto justify-between md:justify-start">
+              <div className="flex items-center gap-2 md:gap-3">
+                <div className="hidden md:flex w-8 h-8 rounded-full bg-neon/10 items-center justify-center text-neon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex flex-col">
+                    <span className="text-[0.55rem] md:text-[0.6rem] font-bold text-text-muted tracking-wider mb-0.5">APP CPU</span>
+                    <span className="text-[0.75rem] md:text-[0.85rem] font-bold text-neon">{sysInfo.app_cpu}</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[0.55rem] md:text-[0.6rem] font-bold text-text-muted tracking-wider mb-0.5">SYS CPU</span>
+                    <span className="text-[0.75rem] md:text-[0.85rem] font-bold text-text-primary">{sysInfo.sys_cpu}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="hidden md:block w-px h-8 bg-border"></div>
+
+              <div className="flex items-center gap-2 md:gap-3">
+                <div className="hidden md:flex w-8 h-8 rounded-full bg-neon/10 items-center justify-center text-neon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="8" x2="22" y2="8"></line><line x1="2" y1="16" x2="22" y2="16"></line><line x1="6" y1="4" x2="6" y2="20"></line><line x1="10" y1="4" x2="10" y2="20"></line><line x1="14" y1="4" x2="14" y2="20"></line><line x1="18" y1="4" x2="18" y2="20"></line></svg>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex flex-col">
+                    <span className="text-[0.55rem] md:text-[0.6rem] font-bold text-text-muted tracking-wider mb-0.5">APP RAM</span>
+                    <span className="text-[0.75rem] md:text-[0.85rem] font-bold text-neon">{sysInfo.app_ram}</span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[0.55rem] md:text-[0.6rem] font-bold text-text-muted tracking-wider mb-0.5">SYS RAM</span>
+                    <span className="text-[0.75rem] md:text-[0.85rem] font-bold text-text-primary">{sysInfo.sys_ram_percent} <span className="text-[0.6rem] md:text-[0.65rem] font-semibold text-text-muted hidden md:inline">({sysInfo.sys_ram})</span></span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="hidden md:block w-px h-8 bg-border"></div>
+
+              <div className="flex items-center gap-2 md:gap-3">
+                <div className="hidden md:flex w-8 h-8 rounded-full bg-neon/10 items-center justify-center text-neon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[0.55rem] md:text-[0.6rem] font-bold text-text-muted tracking-wider mb-0.5">GPU USAGE</span>
+                  <span className="text-[0.75rem] md:text-[0.85rem] font-bold text-text-primary">{sysInfo.gpu_percent} <span className="text-[0.6rem] md:text-[0.65rem] font-semibold text-text-muted">({sysInfo.gpu_mem})</span></span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="w-full h-px bg-border md:hidden my-1"></div>
+
+            <div className="flex flex-wrap md:flex-nowrap items-center gap-4 md:gap-8 z-10 w-full md:w-auto justify-between md:justify-end">
+              <div className="flex flex-col text-left md:text-right">
+                <span className="text-[0.55rem] md:text-[0.6rem] font-bold text-text-muted tracking-wider mb-0.5">LATENCY</span>
+                <span className={`text-[0.75rem] md:text-[0.85rem] font-bold ${latency < 100 ? 'text-green' : latency < 300 ? 'text-orange' : 'text-red'}`}>{latency}ms</span>
+              </div>
+              <div className="hidden md:block w-px h-8 bg-border"></div>
+              <div className="flex flex-col text-left md:text-right">
+                <span className="text-[0.55rem] md:text-[0.6rem] font-bold text-text-muted tracking-wider mb-0.5">NETWORK I/O</span>
+                <span className="text-[0.75rem] md:text-[0.85rem] font-bold text-text-primary">{(sysInfo.net_bytes_recv / 1024 / 1024).toFixed(1)}MB↓ {(sysInfo.net_bytes_sent / 1024 / 1024).toFixed(1)}MB↑</span>
+              </div>
+              <div className="hidden md:block w-px h-8 bg-border"></div>
+              <div className="flex flex-col text-left md:text-right">
+                <span className="text-[0.55rem] md:text-[0.6rem] font-bold text-text-muted tracking-wider mb-0.5">OS / RUNTIME</span>
+                <span className="text-[0.75rem] md:text-[0.85rem] font-bold text-neon">{sysInfo.os}</span>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* Full Screen Loading Overlay */}
       <AnimatePresence>
-        {(loading || isTraining) && (
+        {(loading || showLoader) && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-white/80 backdrop-blur-md flex flex-col items-center justify-center"
+            className="fixed inset-0 z-[100] bg-white/90 backdrop-blur-md flex flex-col items-center justify-center"
           >
-            <div className="relative w-24 h-24 mb-6">
-              <motion.div 
-                className="absolute inset-0 border-[4px] border-neon/20 rounded-full"
-              ></motion.div>
-              <motion.div 
-                className="absolute inset-0 border-[4px] border-neon border-t-transparent rounded-full"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-              ></motion.div>
-              <motion.div 
-                className="absolute inset-3 bg-neon/10 rounded-full flex items-center justify-center"
-                animate={{ scale: [0.9, 1.1, 0.9] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <div className="w-2.5 h-2.5 bg-neon rounded-full shadow-[0_0_10px_var(--neon)]"></div>
-              </motion.div>
-            </div>
             <motion.h3 
               initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className="text-2xl font-bold text-text-primary tracking-tight mb-2 text-center px-4"
+              className="text-2xl font-bold text-text-primary tracking-tight mb-8 text-center px-4"
             >
-              {isTraining ? "Synthesizing Intelligence..." : "Computing Intelligence"}
+              {showLoader ? "Synthesizing Intelligence..." : "Computing Intelligence"}
             </motion.h3>
-            <motion.p 
-              initial={{ y: 10, opacity: 0 }}
-              animate={{ y: 0, opacity: [0.4, 1, 0.4] }}
-              transition={{ 
-                y: { delay: 0.2, duration: 0.4 }, 
-                opacity: { delay: 0.2, duration: 2, repeat: Infinity, ease: "easeInOut" } 
-              }}
-              className="text-[0.95rem] font-medium text-text-muted text-center max-w-sm px-6 leading-relaxed"
-            >
-              {isTraining 
-                ? "The XGBoost model is currently training on a fresh matrix of 50,000 synthetic transactions. Please wait approximately 30 to 60 seconds..." 
-                : "Running XGBoost Inference..."}
-            </motion.p>
+
+            {showLoader && (
+              <div className="w-64 max-w-[80vw]">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[0.65rem] font-bold tracking-widest text-text-secondary">SYSTEM UPDATE</span>
+                  <span className="text-[0.65rem] font-bold tracking-widest text-neon">{trainProgress}%</span>
+                </div>
+                <div className="h-1.5 w-full bg-border rounded-full overflow-hidden">
+                  <motion.div 
+                    className="h-full bg-neon shadow-[0_0_10px_var(--neon)]"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${trainProgress}%` }}
+                    transition={{ ease: "linear", duration: 0.1 }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {loading && !showLoader && (
+              <div className="w-64 max-w-[80vw]">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[0.65rem] font-bold tracking-widest text-text-secondary">INFERENCE</span>
+                </div>
+                <div className="h-1.5 w-full bg-border rounded-full overflow-hidden relative">
+                  <motion.div 
+                    className="absolute top-0 bottom-0 bg-neon shadow-[0_0_10px_var(--neon)] w-1/3 rounded-full"
+                    animate={{ left: ["-30%", "100%"] }}
+                    transition={{ ease: "easeInOut", duration: 1, repeat: Infinity }}
+                  />
+                </div>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

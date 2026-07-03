@@ -203,9 +203,7 @@ export default function DocsPage() {
             <div className="p-6 md:p-8 bg-surface rounded-[24px] md:rounded-3xl border border-border md:group-hover:border-neon/30 transition-colors duration-500 shadow-sm relative overflow-hidden">
               <div className="absolute bottom-0 right-0 w-64 h-64 bg-neon/5 rounded-full blur-[80px] translate-y-1/2 translate-x-1/2"></div>
               <p className="text-[0.9rem] leading-relaxed text-text-secondary mb-6 relative z-10">
-                Data acts as the foundation of the intelligence pipeline. The current implementation programmatically generates
-                a highly sophisticated, probabilistic synthetic transaction matrix of 50,000 distinct records. It mathematically models
-                real-world BNPL behavioral constraints by categorizing populations into rigid latent risk tiers prior to feature distribution sampling.
+                Data acts as the foundation of the intelligence pipeline. The current implementation utilizes a strictly hardcoded, deterministic dataset of provided user records. The dataset is programmatically duplicated and upsampled into thousands of distinct records to mathematically satisfy the Gradient Boosting model's cross-validation requirements without altering the underlying ground-truth of the deterministic records.
               </p>
 
               <div className="grid grid-cols-1 gap-4 relative z-10">
@@ -289,8 +287,7 @@ export default function DocsPage() {
             </h2>
             <div className="p-6 md:p-8 bg-surface rounded-[24px] md:rounded-3xl border border-border md:group-hover:border-neon/30 transition-colors duration-500 shadow-sm relative overflow-hidden">
               <p className="text-[0.9rem] leading-relaxed text-text-secondary mb-6 relative z-10">
-                To guarantee state-of-the-art predictive relevance, the architecture supports zero-downtime, continuous feature matrix regeneration
-                and model hot-swapping via an asynchronous cycle.
+                The architecture natively supports deterministic inference lookups. Providing a registered phone number instantly extracts the user's precise feature matrix for isolated predictive analysis.
               </p>
 
               <div className="relative border-l-[2px] border-neon/30 ml-3 pl-6 space-y-6 z-10">
